@@ -1,0 +1,15 @@
+name: serial
+description: A new Flutter package project.
+version: 0.1.0
+homepage: https://pwa.ir
+repository: http://github.com/xclud/dart_serial/
+
+environment:
+  sdk: ">=2.12.0 <3.0.0"
+
+dependencies:
+  js: ^0.6.3
+
+dev_dependencies:
+  test: ^1.0.0
+  lints: ^1.0.0
