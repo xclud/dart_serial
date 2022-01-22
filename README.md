@@ -4,11 +4,12 @@
 
 ```
 import 'dart:html';
+import 'package:serial/serial.dart';
 
 final port = await window.navigator.serial.requestPort();
 await port.open(SerialOptions(baudRate: 9600));
 
-final writer = _port.writable.writer;
+final writer = port.writable.writer;
 
 await writer.ready;
 await writer.write(Uint8List.fromList('Hello World.'.codeUnits));
