@@ -106,10 +106,10 @@ extension SerialPortExtensions on SerialPort {
   Future<void> open(SerialOptions options) => promiseToFuture(_open(options));
   Future<void> close() => promiseToFuture(_close());
 
-  /// Returns a `Future` that resolves with a `SerialPortInfo` containing properties of the port.
-  ///
-  /// This feature is available only in secure contexts (HTTPS), in some or all supporting browsers.
-  ///
+  // Returns a `Future` that resolves with a `SerialPortInfo` containing properties of the port.
+  //
+  // This feature is available only in secure contexts (HTTPS), in some or all supporting browsers.
+  //
   // Future<SerialPortInfo?> getInfo() async {
   //   final promise = _getInfo();
   //   if (promise == null) {

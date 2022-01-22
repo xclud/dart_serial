@@ -1,3 +1,5 @@
+// ignore_for_file: avoid_web_libraries_in_flutter
+
 import 'dart:async';
 import 'dart:html';
 import 'dart:typed_data';
@@ -22,8 +24,6 @@ class _MyAppState extends State<MyApp> {
     final port = await window.navigator.serial.requestPort();
     await port.open(SerialOptions(baudRate: 9600));
 
-    final info = port.getInfo();
-    print(info);
     _port = port;
   }
 
@@ -46,7 +46,7 @@ class _MyAppState extends State<MyApp> {
     return MaterialApp(
       home: Scaffold(
         appBar: AppBar(
-          title: const Text('Plugin example app'),
+          title: const Text('Flutter Serial'),
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
