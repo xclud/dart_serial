@@ -2,7 +2,7 @@ name: serial
 description: Serial port for flutter. Wrapper around the `window.navigator.serial` for web platform.
 version: 0.0.1
 homepage: https://pwa.ir
-repository: http://github.com/xclud/dart_serial/
+repository: https://github.com/xclud/dart_serial/
 
 environment:
   sdk: ">=2.12.0 <3.0.0"
