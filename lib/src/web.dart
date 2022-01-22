@@ -160,6 +160,10 @@ extension WritableStreamDefaultWriterExtensions on WritableStreamDefaultWriter {
   Future<void> write(Uint8List chunk) => promiseToFuture(_write(chunk));
   Future<void> close() => promiseToFuture(_close());
   Future<void> get ready => promiseToFuture(_ready);
+
+  /// Returns a promise that will be fulfilled when the stream becomes closed,
+  /// or rejected if the stream ever errors or the reader’s lock is released
+  /// before the stream finishes closing.
   Future<void> get closed => promiseToFuture(_closed);
   Future<void> abort([Object? reason]) => promiseToFuture(_abort(reason));
 }
@@ -168,8 +172,25 @@ extension ReadableStreamReaderExtensions on ReadableStreamReader {
   @JS('read')
   external Object _read();
 
+  /// Releases the reader’s lock on the corresponding stream.
+  /// After the lock is released, the reader is no longer active.
+  /// If the associated stream is errored when the lock is released,
+  /// the reader will appear errored in the same way from now on;
+  /// otherwise, the reader will appear closed.
+  ///
+  /// If the reader’s lock is released while it still has pending read requests,
+  /// then the promises returned by the reader’s `read` method are immediately rejected
+  /// with a TypeError. Any unread chunks remain in the stream’s internal queue and can
+  /// be read later by acquiring a new reader.
   external void releaseLock();
 
+  /// Returns a promise that allows access to the next chunk from the stream’s internal queue, if available.
+  ///
+  /// - If the chunk does become available, the promise will be fulfilled with an object of the form { value: theChunk, done: false }.
+  /// - If the stream becomes closed, the promise will be fulfilled with an object of the form { value: undefined, done: true }.
+  /// - If the stream becomes errored, the promise will be rejected with the relevant error.
+  ///
+  /// If reading a chunk causes the queue to become empty, more data will be pulled from the underlying source.
   Future<ReadableStreamDefaultReadResult> read() => promiseToFuture(_read());
 }
 
