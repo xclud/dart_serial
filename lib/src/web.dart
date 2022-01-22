@@ -48,6 +48,10 @@ abstract class WritableStreamDefaultWriter {}
 @anonymous
 abstract class ReadableStreamReader {}
 
+@JS()
+@anonymous
+abstract class ReadableStreamDefaultReadResult {}
+
 class SerialOptions {
   SerialOptions({
     required this.baudRate,
@@ -125,11 +129,16 @@ extension SerialPortExtensions on SerialPort {
 extension WritableStreamExtensions on WritableStream {
   @JS('getWriter')
   external WritableStreamDefaultWriter _getWriter();
+
+  @JS('getReader')
+  external ReadableStreamReader _getReader();
+
   @JS('close')
   external Object _close();
 
   Future<void> close() => promiseToFuture(_close());
   WritableStreamDefaultWriter get writer => _getWriter();
+  ReadableStreamReader get reader => _getReader();
 }
 
 extension WritableStreamDefaultWriterExtensions on WritableStreamDefaultWriter {
@@ -153,4 +162,19 @@ extension WritableStreamDefaultWriterExtensions on WritableStreamDefaultWriter {
   Future<void> get ready => promiseToFuture(_ready);
   Future<void> get closed => promiseToFuture(_closed);
   Future<void> abort([Object? reason]) => promiseToFuture(_abort(reason));
+}
+
+extension ReadableStreamReaderExtensions on ReadableStreamReader {
+  @JS('read')
+  external Object _read();
+
+  external void releaseLock();
+
+  Future<ReadableStreamDefaultReadResult> read() => promiseToFuture(_read());
+}
+
+extension ReadableStreamDefaultReadResultExtensions
+    on ReadableStreamDefaultReadResult {
+  external Object get value;
+  external bool get done;
 }
