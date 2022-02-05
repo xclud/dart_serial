@@ -141,6 +141,17 @@ extension WritableStreamExtensions on WritableStream {
   ReadableStreamReader get reader => _getReader();
 }
 
+extension ReadableStreamExtensions on ReadableStream {
+  @JS('getReader')
+  external ReadableStreamReader _getReader();
+
+  @JS('close')
+  external Object _close();
+
+  Future<void> close() => promiseToFuture(_close());
+  ReadableStreamReader get reader => _getReader();
+}
+
 extension WritableStreamDefaultWriterExtensions on WritableStreamDefaultWriter {
   @JS('write')
   external Object _write(Uint8List chunk);
@@ -196,6 +207,6 @@ extension ReadableStreamReaderExtensions on ReadableStreamReader {
 
 extension ReadableStreamDefaultReadResultExtensions
     on ReadableStreamDefaultReadResult {
-  external Object get value;
+  external Uint8List get value;
   external bool get done;
 }

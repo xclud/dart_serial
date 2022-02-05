@@ -20,6 +20,9 @@ class MyApp extends StatefulWidget {
 
 class _MyAppState extends State<MyApp> {
   SerialPort? _port;
+  final _received = <String>[];
+  //final _inputController = TextEditingController();
+
   Future<void> _openPort() async {
     final port = await window.navigator.serial.requestPort();
     await port.open(SerialOptions(baudRate: 9600));
@@ -41,6 +44,23 @@ class _MyAppState extends State<MyApp> {
     await writer.close();
   }
 
+  Future<void> _readFromPort() async {
+    if (_port == null) {
+      return;
+    }
+
+    final reader = _port!.readable.reader;
+
+    while (true) {
+      final result = await reader.read();
+      final text = String.fromCharCodes(result.value);
+
+      _received.add(text);
+
+      setState(() {});
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return MaterialApp(
@@ -50,8 +70,13 @@ class _MyAppState extends State<MyApp> {
         ),
         body: Column(
           crossAxisAlignment: CrossAxisAlignment.stretch,
-          mainAxisAlignment: MainAxisAlignment.center,
           children: [
+            Expanded(
+              child: ListView(
+                padding: const EdgeInsets.all(8),
+                children: _received.map((e) => Text(e)).toList(),
+              ),
+            ),
             ElevatedButton(
               child: const Text('Open Port'),
               onPressed: () {
@@ -63,6 +88,13 @@ class _MyAppState extends State<MyApp> {
               child: const Text('Send'),
               onPressed: () {
                 _writeToPort();
+              },
+            ),
+            const SizedBox(height: 16),
+            ElevatedButton(
+              child: const Text('Receive'),
+              onPressed: () {
+                _readFromPort();
               },
             ),
           ],
