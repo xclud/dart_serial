@@ -12,10 +12,6 @@ In order to access serial ports on web, you need your web page to open from an H
 
 More information: [https://developer.mozilla.org/en-US/docs/Web/API/SerialPort](https://developer.mozilla.org/en-US/docs/Web/API/SerialPort)
 
-## Demo
-
-[Web Demo](https://xclud.github.io/dart_serial/)
-
 ## Usage
 
 ``` dart
