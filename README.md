@@ -19,7 +19,7 @@ import 'dart:html';
 import 'package:serial/serial.dart';
 
 final port = await window.navigator.serial.requestPort();
-await port.open(SerialOptions(baudRate: 9600));
+await port.open(baudRate: 9600);
 
 final writer = port.writable.writer;
 
