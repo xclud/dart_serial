@@ -1,10 +1,5 @@
+part of serial;
 // ignore_for_file: avoid_web_libraries_in_flutter
-
-import 'dart:async';
-import 'dart:html';
-import 'dart:typed_data';
-
-import 'package:js/js.dart';
 
 extension NavigatorExtension on Navigator {
   external Serial get serial;
@@ -52,34 +47,6 @@ abstract class ReadableStreamReader {}
 @anonymous
 abstract class ReadableStreamDefaultReadResult {}
 
-class SerialOptions {
-  SerialOptions({
-    required this.baudRate,
-    this.dataBits = 8,
-    this.stopBits = 1,
-    this.parity = 'none',
-    this.bufferSize = 255,
-    this.flowControl = 'none',
-  });
-
-  /// A positive, non-zero value indicating the baud rate at which serial communication should be established.
-  final int baudRate;
-
-  /// The number of data bits per frame. Either 7 or 8.
-  final int dataBits;
-
-  /// The number of stop bits at the end of a frame. Either 1 or 2.
-  final int stopBits;
-
-  /// The parity mode.
-  final String parity;
-
-  /// A positive, non-zero value indicating the size of the read and write buffers that should be created.
-  final int bufferSize;
-
-  final String flowControl;
-}
-
 @JS()
 @anonymous
 abstract class SerialPortInfo {
@@ -97,7 +64,7 @@ abstract class SerialPortInfo {
 
 extension SerialPortExtensions on SerialPort {
   @JS('open')
-  external Object _open(SerialOptions options);
+  external Object _open(_SerialOptions options);
   @JS('close')
   external Object _close();
 
@@ -107,7 +74,30 @@ extension SerialPortExtensions on SerialPort {
   @JS('getInfo')
   external SerialPortInfo? getInfo();
 
-  Future<void> open(SerialOptions options) => promiseToFuture(_open(options));
+  /// Opens the serial port.
+  Future<void> open({
+    required int baudRate,
+    DataBits dataBits = DataBits.eight,
+    StopBits stopBits = StopBits.one,
+    Parity parity = Parity.none,
+    int bufferSize = 255,
+    FlowControl flowControl = FlowControl.none,
+  }) {
+    final promise = _open(
+      _SerialOptions(
+        baudRate: baudRate,
+        dataBits: _getDataBits(dataBits),
+        stopBits: _getStopBits(stopBits),
+        parity: _getParityString(parity),
+        bufferSize: bufferSize,
+        flowControl: _getFlowControlString(flowControl),
+      ),
+    );
+
+    return promiseToFuture(promise);
+  }
+
+  /// Closes the serial port.
   Future<void> close() => promiseToFuture(_close());
 
   // Returns a `Future` that resolves with a `SerialPortInfo` containing properties of the port.
@@ -126,21 +116,22 @@ extension SerialPortExtensions on SerialPort {
   // }
 }
 
+/// Extensions on [WritableStream].
 extension WritableStreamExtensions on WritableStream {
   @JS('getWriter')
   external WritableStreamDefaultWriter _getWriter();
 
-  @JS('getReader')
-  external ReadableStreamReader _getReader();
-
   @JS('close')
   external Object _close();
 
+  /// Closes the [WritableStream].
   Future<void> close() => promiseToFuture(_close());
+
+  /// Gets the writer interface of the [WritableStream].
   WritableStreamDefaultWriter get writer => _getWriter();
-  ReadableStreamReader get reader => _getReader();
 }
 
+/// Extensions on [ReadableStream].
 extension ReadableStreamExtensions on ReadableStream {
   @JS('getReader')
   external ReadableStreamReader _getReader();
@@ -148,10 +139,14 @@ extension ReadableStreamExtensions on ReadableStream {
   @JS('close')
   external Object _close();
 
+  /// Closes the [ReadableStream].
   Future<void> close() => promiseToFuture(_close());
+
+  /// Gets the reader interface of the [ReadableStream].
   ReadableStreamReader get reader => _getReader();
 }
 
+/// Extensions on [WritableStreamDefaultWriter].
 extension WritableStreamDefaultWriterExtensions on WritableStreamDefaultWriter {
   @JS('write')
   external Object _write(Uint8List chunk);
@@ -160,16 +155,25 @@ extension WritableStreamDefaultWriterExtensions on WritableStreamDefaultWriter {
 
   @JS('closed')
   external Object get _closed;
+
+  /// Gets the desired size.
   external double? get desiredSize;
 
   @JS('ready')
   external Object get _ready;
   @JS('abort')
   external Object _abort([Object? reason]);
+
+  /// Release Lock.
   external void releaseLock();
 
+  /// Writes a chunk.
   Future<void> write(Uint8List chunk) => promiseToFuture(_write(chunk));
+
+  /// Closes the writer.
   Future<void> close() => promiseToFuture(_close());
+
+  /// Await until the stream is ready.
   Future<void> get ready => promiseToFuture(_ready);
 
   /// Returns a promise that will be fulfilled when the stream becomes closed,
@@ -179,6 +183,7 @@ extension WritableStreamDefaultWriterExtensions on WritableStreamDefaultWriter {
   Future<void> abort([Object? reason]) => promiseToFuture(_abort(reason));
 }
 
+/// Extensions on [ReadableStreamReader].
 extension ReadableStreamReaderExtensions on ReadableStreamReader {
   @JS('read')
   external Object _read();
@@ -205,6 +210,7 @@ extension ReadableStreamReaderExtensions on ReadableStreamReader {
   Future<ReadableStreamDefaultReadResult> read() => promiseToFuture(_read());
 }
 
+/// Extensions on [ReadableStreamDefaultReadResult].
 extension ReadableStreamDefaultReadResultExtensions
     on ReadableStreamDefaultReadResult {
   external Uint8List get value;

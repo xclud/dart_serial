@@ -25,7 +25,7 @@ class _MyAppState extends State<MyApp> {
 
   Future<void> _openPort() async {
     final port = await window.navigator.serial.requestPort();
-    await port.open(SerialOptions(baudRate: 9600));
+    await port.open(baudRate: 9600);
 
     _port = port;
   }
