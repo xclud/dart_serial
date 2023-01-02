@@ -1,5 +1,9 @@
 `serial` is a wrapper around the `window.navigator.serial`. This package does not provide any additional API, but merely helps to make the `dart:html` package work "out of the box" without the need of manually writing any javascript code.
 
+## Web Demo
+
+[Web Demo](https://serial.pwa.ir)
+
 ## Requirements
 
 In order to access serial ports on web, you need your web page to open from an HTTPS url.
@@ -14,7 +18,7 @@ More information: [https://developer.mozilla.org/en-US/docs/Web/API/SerialPort](
 
 ## Usage
 
-```
+``` dart
 import 'dart:html';
 import 'package:serial/serial.dart';
 
