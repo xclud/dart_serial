@@ -1,3 +1,7 @@
+## 0.0.4
+
+Dart SDK 4.0 support.
+
 ## 0.0.3
 
 * Fixed a bug when build in release mode. Thanks to [cw-20021366](https://github.com/cw-20021366).
