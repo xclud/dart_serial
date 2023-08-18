@@ -56,6 +56,11 @@ extension SerialPortExtensions on SerialPort {
   @JS('getInfo')
   external SerialPortInfo getInfo();
 
+  @JS('getSignals')
+  external SignalState getSignals();
+  @JS('setSignals')
+  external Object _setSignals(_SignalOptions options);
+
   external WritableStream get writable;
   external ReadableStream get readable;
 
@@ -99,6 +104,21 @@ extension SerialPortExtensions on SerialPort {
 
   //   return info;
   // }
+
+  /// Sets control signals on the port.
+  Future<void> setSignals({
+    bool dataTerminalReady = false,
+    bool requestToSend = false,
+    // bool break = false,
+  }) {
+    final promise = _setSignals(_SignalOptions(
+      dataTerminalReady: dataTerminalReady,
+      requestToSend: requestToSend,
+      // break: break
+    ));
+
+    return promiseToFuture(promise);
+  }
 }
 
 /// Extensions on [WritableStream].
@@ -121,8 +141,16 @@ extension ReadableStreamExtensions on ReadableStream {
   @JS('getReader')
   external ReadableStreamReader _getReader();
 
+  @JS('cancel')
+  external Object _cancel();
+
   @JS('close')
   external Object _close();
+
+  external bool get locked;
+
+  /// Cancels the [ReadableStream].
+  Future<void> cancel() => promiseToFuture(_cancel());
 
   /// Closes the [ReadableStream].
   Future<void> close() => promiseToFuture(_close());
@@ -170,8 +198,14 @@ extension WritableStreamDefaultWriterExtensions on WritableStreamDefaultWriter {
 
 /// Extensions on [ReadableStreamReader].
 extension ReadableStreamReaderExtensions on ReadableStreamReader {
+  @JS('closed')
+  external Object get _closed;
+
   @JS('read')
   external Object _read();
+
+  @JS('cancel')
+  external Object _cancel();
 
   /// Releases the reader’s lock on the corresponding stream.
   /// After the lock is released, the reader is no longer active.
@@ -185,6 +219,8 @@ extension ReadableStreamReaderExtensions on ReadableStreamReader {
   /// be read later by acquiring a new reader.
   external void releaseLock();
 
+  Future<void> get closed => promiseToFuture(_closed);
+
   /// Returns a promise that allows access to the next chunk from the stream’s internal queue, if available.
   ///
   /// - If the chunk does become available, the promise will be fulfilled with an object of the form { value: theChunk, done: false }.
@@ -193,6 +229,9 @@ extension ReadableStreamReaderExtensions on ReadableStreamReader {
   ///
   /// If reading a chunk causes the queue to become empty, more data will be pulled from the underlying source.
   Future<ReadableStreamDefaultReadResult> read() => promiseToFuture(_read());
+
+  /// Cancels the [ReadableStreamReader].
+  Future<void> cancel() => promiseToFuture(_cancel());
 }
 
 /// Extensions on [ReadableStreamDefaultReadResult].
