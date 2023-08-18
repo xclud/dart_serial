@@ -16,8 +16,13 @@ extension SerialExtensions on Serial {
   @JS('requestPort')
   external Object _requestPort();
 
-  Future<List<SerialPort>> getPorts() =>
-      promiseToFuture<List<SerialPort>>(_getPorts());
+  Future<List<SerialPort>> getPorts() async {
+      final dynamic ports = await promiseToFuture(_getPorts());
+      if (ports is List) {
+          return List<SerialPort>.from(ports);
+      }
+      return [];
+  }
 
   Future<SerialPort> requestPort() =>
       promiseToFuture<SerialPort>(_requestPort());
