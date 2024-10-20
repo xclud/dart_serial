@@ -1,3 +1,7 @@
+## 0.0.5
+
+Maintenance.
+
 ## 0.0.4
 
 Dart SDK 4.0 support.
