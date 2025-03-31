@@ -134,6 +134,8 @@ extension WritableStreamExtensions on WritableStream {
   @JS('close')
   external Object _close();
 
+  external bool get locked;
+
   /// Closes the [WritableStream].
   Future<void> close() => promiseToFuture(_close());
 
