@@ -21,6 +21,7 @@ class HomePage extends StatefulWidget {
 class _HomePageState extends State<HomePage> {
   SerialPort? _port;
   web.ReadableStreamDefaultReader? _reader;
+  bool _keepReading = true;
 
   final _received = <Uint8List>[];
 
@@ -29,9 +30,11 @@ class _HomePageState extends State<HomePage> {
   Future<void> _openPort() async {
     await _port?.close().toDart;
     final port = await web.window.navigator.serial.requestPort().toDart;
+
     await port.open(baudRate: 9600).toDart;
 
     _port = port;
+    _keepReading = true;
 
     _startReceiving(port);
 
@@ -58,13 +61,13 @@ class _HomePageState extends State<HomePage> {
   }
 
   Future<void> _startReceiving(SerialPort port) async {
-    while (port.readable != null) {
+    while (port.readable != null && _keepReading) {
       final reader =
           port.readable!.getReader() as web.ReadableStreamDefaultReader;
 
       _reader = reader;
 
-      while (true) {
+      while (_keepReading) {
         try {
           final result = await reader.read().toDart;
 
@@ -85,6 +88,8 @@ class _HomePageState extends State<HomePage> {
           reader.releaseLock();
         }
       }
+
+      reader.releaseLock();
     }
   }
 
@@ -108,6 +113,7 @@ class _HomePageState extends State<HomePage> {
             onPressed: port == null
                 ? null
                 : () async {
+                    _keepReading = false;
                     final reader = _reader;
                     if (reader != null) {
                       await reader.cancel().toDart;

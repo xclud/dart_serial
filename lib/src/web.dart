@@ -59,6 +59,14 @@ extension type SerialPort._(JSObject _) implements JSObject {
     return _open(options);
   }
 
+  // /// Fired when the port connects to the device.
+  // external JSAny? get connect;
+  // external set connect(JSAny? value);
+
+  // /// Fired when the port disconnects from the device.
+  // external JSAny? get disconnect;
+  // external set disconnect(JSAny? value);
+
   /// Returns a [JSPromise] that resolves when access to the serial port is revoked.
   external JSPromise forget();
 
