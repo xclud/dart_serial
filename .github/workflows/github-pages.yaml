@@ -13,7 +13,7 @@ jobs:
     name: Build Web App
     runs-on: ubuntu-latest
     steps:
-      - uses: actions/checkout@v3
+      - uses: actions/checkout@v4
       - name: Fetch all history for all tags and branches
         run: |
           git config remote.origin.url https://x-access-token:${{ secrets.GH_TOKEN }}@github.com/${{ github.repository }}
@@ -26,7 +26,7 @@ jobs:
       - name: Build Web App
         run: cd example && flutter build web
       - name: Upload Artifacts
-        uses: actions/upload-pages-artifact@v1
+        uses: actions/upload-pages-artifact@v3
         with:
           path: example/build/web
   deploy:
@@ -42,4 +42,4 @@ jobs:
     steps:
       - name: Deploy to GitHub Pages
         id: deployment
-        uses: actions/deploy-pages@v1
+        uses: actions/deploy-pages@v4
