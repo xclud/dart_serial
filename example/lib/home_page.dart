@@ -9,8 +9,10 @@ import 'package:web/web.dart' as web;
 
 import 'package:serial/serial.dart';
 
+///
 class HomePage extends StatefulWidget {
-  const HomePage({Key? key}) : super(key: key);
+  ///
+  const HomePage({super.key});
 
   @override
   State<HomePage> createState() => _HomePageState();
@@ -18,8 +20,6 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   SerialPort? _port;
-  ReadableStreamDefaultReader? _reader;
-  WritableStreamDefaultWriter? _writer;
 
   final _received = <Uint8List>[];
 
@@ -27,7 +27,6 @@ class _HomePageState extends State<HomePage> {
 
   Future<void> _openPort() async {
     await _port?.close().toDart;
-
     final port = await web.window.navigator.serial.requestPort().toDart;
     await port.open(baudRate: 9600).toDart;
 
@@ -49,32 +48,41 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    final writer = port.writable.getWriter();
-    _writer = writer;
+    final writer = port.writable?.getWriter();
 
-    await writer.ready.toDart;
-    await writer.write(data.toJS).toDart;
-
-    await writer.ready.toDart;
-    await writer.close().toDart;
+    if (writer != null) {
+      await writer.write(data.toJS).toDart;
+      writer.releaseLock();
+    }
   }
 
   Future<void> _startReceiving(SerialPort port) async {
-    final reader = port.readable.getReader();
-    _reader = reader;
+    while (port.readable != null) {
+      final reader =
+          port.readable!.getReader() as web.ReadableStreamDefaultReader;
 
-    while (port.readable.locked) {
-      final result = await reader.read().toDart;
-      final bytes = result.value;
-      if (bytes != null) {
-        _received.add(bytes.toDart);
+      while (true) {
+        try {
+          final result = await reader.read().toDart;
+
+          if (result.done) {
+            ///Reader has been canceled.
+            break;
+          }
+
+          final value = result.value;
+          if (value != null && value.isA<JSUint8Array>()) {
+            final data = value as JSUint8Array;
+            _received.add(data.toDart);
+            setState(() {});
+          }
+        } catch (e) {
+          print(e);
+        } finally {
+          reader.releaseLock();
+        }
       }
-
-      setState(() {});
     }
-
-    reader.cancel();
-    _reader = null;
   }
 
   @override
@@ -97,15 +105,6 @@ class _HomePageState extends State<HomePage> {
             onPressed: port == null
                 ? null
                 : () async {
-                    if (_writer != null && port.writable.locked == true) {
-                      await port.writable.abort('Closing').toDart;
-                    }
-
-                    if (_reader != null) {
-                      await _reader?.cancel().toDart;
-                      await port.readable.cancel().toDart;
-                    }
-
                     await port.close().toDart;
                     _port = null;
 

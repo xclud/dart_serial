@@ -1,8 +1,11 @@
 part of '../serial.dart';
 
-/// The flow control type, either "none" or "hardware". The default value is "none".
+/// The flow control type, either [none] or [hardware]. The default value is [none].
 enum FlowControl {
+  /// None.
   none,
+
+  /// Hardware.
   hardware,
 }
 

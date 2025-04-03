@@ -1,3 +1,7 @@
+## 0.0.7
+
+Use Streaming APIs from `web` package.
+
 ## 0.0.6
 
 Migrate to `dart:js_interop`.

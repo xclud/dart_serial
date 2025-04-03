@@ -1,8 +1,9 @@
 part of '../serial.dart';
 
+/// Signal State.
 @JS()
-@anonymous
-extension type SignalState._(JSObject _) {
+extension type SignalState._(JSObject _) implements JSAny {
+  /// Factory.
   external factory SignalState({
     bool? clearToSend,
     bool? dataCarrierDetect,

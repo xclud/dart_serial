@@ -2,8 +2,13 @@ part of '../serial.dart';
 
 /// The parity mode.
 enum Parity {
+  /// None.
   none,
+
+  /// Even.
   even,
+
+  /// Odd.
   odd,
 }
 

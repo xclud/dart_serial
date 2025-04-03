@@ -2,7 +2,10 @@ part of '../serial.dart';
 
 /// Stop bits.
 enum StopBits {
+  /// One.
   one,
+
+  /// Two.
   two,
 }
 

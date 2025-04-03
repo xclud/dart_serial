@@ -42,8 +42,8 @@ analyzer:
 linter:
   rules:
     always_use_package_imports: true
-    avoid_print: false
+    avoid_print: true
     prefer_single_quotes: true
-    public_member_api_docs: false
+    public_member_api_docs: true
     sort_constructors_first: true
     sort_unnamed_constructors_first: true

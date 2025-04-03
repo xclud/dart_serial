@@ -2,7 +2,10 @@ part of '../serial.dart';
 
 /// Data bits.
 enum DataBits {
+  /// Seven.
   seven,
+
+  ///Eight.
   eight,
 }
 
