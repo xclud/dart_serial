@@ -1,9 +1,9 @@
-part of serial;
+part of '../serial.dart';
 
 /// Options for [SignalPortExtensions.setSignals].
 @JS()
 @anonymous
-abstract class _SignalOptions {
+extension type _SignalOptions._(JSObject _) {
   /// The external constructor.
   external factory _SignalOptions({
     bool dataTerminalReady = false,

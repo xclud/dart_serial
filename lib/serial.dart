@@ -1,9 +1,7 @@
-library serial;
+library;
 
-import 'package:js/js.dart';
-import 'dart:async';
-import 'dart:html';
-import 'dart:typed_data';
+import 'dart:js_interop';
+import 'package:web/web.dart';
 
 part 'src/data_bits.dart';
 part 'src/flow_control.dart';
@@ -14,3 +12,5 @@ part 'src/signal_options.dart';
 part 'src/signal_state.dart';
 part 'src/stop_bits.dart';
 part 'src/web.dart';
+part 'src/readable_stream.dart';
+part 'src/writable_stream.dart';

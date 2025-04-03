@@ -1,10 +1,11 @@
 // ignore_for_file: avoid_web_libraries_in_flutter
 
 import 'dart:async';
-import 'dart:html';
+import 'dart:js_interop';
 import 'dart:typed_data';
 import 'package:flutter/material.dart';
 import 'package:gap/gap.dart';
+import 'package:web/web.dart' as web;
 
 import 'package:serial/serial.dart';
 
@@ -17,15 +18,18 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   SerialPort? _port;
+  ReadableStreamDefaultReader? _reader;
+  WritableStreamDefaultWriter? _writer;
+
   final _received = <Uint8List>[];
 
   final _controller1 = TextEditingController();
 
   Future<void> _openPort() async {
-    await _port?.close();
+    await _port?.close().toDart;
 
-    final port = await window.navigator.serial.requestPort();
-    await port.open(baudRate: 9600);
+    final port = await web.window.navigator.serial.requestPort().toDart;
+    await port.open(baudRate: 9600).toDart;
 
     _port = port;
 
@@ -45,32 +49,43 @@ class _HomePageState extends State<HomePage> {
       return;
     }
 
-    final writer = port.writable.writer;
+    final writer = port.writable.getWriter();
+    _writer = writer;
 
-    await writer.ready;
-    await writer.write(data);
+    await writer.ready.toDart;
+    await writer.write(data.toJS).toDart;
 
-    await writer.ready;
-    await writer.close();
+    await writer.ready.toDart;
+    await writer.close().toDart;
   }
 
   Future<void> _startReceiving(SerialPort port) async {
-    final reader = port.readable.reader;
+    final reader = port.readable.getReader();
+    _reader = reader;
 
-    while (true) {
-      final result = await reader.read();
-      _received.add(result.value);
+    while (port.readable.locked) {
+      final result = await reader.read().toDart;
+      final bytes = result.value;
+      if (bytes != null) {
+        _received.add(bytes.toDart);
+      }
 
       setState(() {});
     }
+
+    reader.cancel();
+    _reader = null;
   }
 
   @override
   Widget build(BuildContext context) {
-    //final theme = Theme.of(context);
+    final theme = Theme.of(context);
+
+    final port = _port;
 
     return Scaffold(
       appBar: AppBar(
+        backgroundColor: theme.colorScheme.inversePrimary,
         title: const Text('Serial Port'),
         actions: [
           IconButton(
@@ -79,10 +94,19 @@ class _HomePageState extends State<HomePage> {
             tooltip: 'Open Serial Port',
           ),
           IconButton(
-            onPressed: _port == null
+            onPressed: port == null
                 ? null
                 : () async {
-                    await _port?.close();
+                    if (_writer != null && port.writable.locked == true) {
+                      await port.writable.abort('Closing').toDart;
+                    }
+
+                    if (_reader != null) {
+                      await _reader?.cancel().toDart;
+                      await port.readable.cancel().toDart;
+                    }
+
+                    await port.close().toDart;
                     _port = null;
 
                     setState(() {});

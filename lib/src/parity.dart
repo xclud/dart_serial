@@ -1,4 +1,4 @@
-part of serial;
+part of '../serial.dart';
 
 /// The parity mode.
 enum Parity {

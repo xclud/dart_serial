@@ -1,4 +1,4 @@
-part of serial;
+part of '../serial.dart';
 
 /// Data bits.
 enum DataBits {

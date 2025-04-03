@@ -1,3 +1,7 @@
+## 0.0.6
+
+Migrate to `dart:js_interop`.
+
 ## 0.0.5
 
 Maintenance.

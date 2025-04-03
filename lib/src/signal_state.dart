@@ -1,8 +1,8 @@
-part of serial;
+part of '../serial.dart';
 
 @JS()
 @anonymous
-abstract class SignalState {
+extension type SignalState._(JSObject _) {
   external factory SignalState({
     bool? clearToSend,
     bool? dataCarrierDetect,

@@ -1,9 +1,7 @@
-part of serial;
+part of '../serial.dart';
 
-/// Options for [SerialPortExtensions.open].
 @JS()
-@anonymous
-abstract class _SerialOptions {
+extension type _SerialOptions._(JSObject _) {
   /// The external constructor.
   external factory _SerialOptions({
     required int baudRate,

@@ -30,6 +30,7 @@ class _MyAppState extends State<MyApp> {
 
     return MaterialApp(
       theme: theme,
+      debugShowCheckedModeBanner: false,
       home: HomePage(),
     );
   }

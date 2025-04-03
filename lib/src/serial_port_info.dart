@@ -1,8 +1,7 @@
-part of serial;
+part of '../serial.dart';
 
 @JS()
-@anonymous
-abstract class SerialPortInfo {
+extension type SerialPortInfo._(JSObject _) {
   external factory SerialPortInfo({
     int? usbVendorId,
     int? usbProductId,
