@@ -20,6 +20,7 @@ class HomePage extends StatefulWidget {
 
 class _HomePageState extends State<HomePage> {
   SerialPort? _port;
+  web.ReadableStreamDefaultReader? _reader;
 
   final _received = <Uint8List>[];
 
@@ -60,6 +61,8 @@ class _HomePageState extends State<HomePage> {
     while (port.readable != null) {
       final reader =
           port.readable!.getReader() as web.ReadableStreamDefaultReader;
+
+      _reader = reader;
 
       while (true) {
         try {
@@ -105,6 +108,11 @@ class _HomePageState extends State<HomePage> {
             onPressed: port == null
                 ? null
                 : () async {
+                    final reader = _reader;
+                    if (reader != null) {
+                      await reader.cancel().toDart;
+                      _reader = null;
+                    }
                     await port.close().toDart;
                     _port = null;
 

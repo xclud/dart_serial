@@ -10,5 +10,5 @@ extension type SerialPortInfo._(JSObject _) {
   external int? get usbProductId;
 
   /// If the port is a Bluetooth RFCOMM service, this property is an unsigned long [int] or [String] representing the device's Bluetooth service class ID. If not, it is `null`.
-  external Object? get bluetoothServiceClassId;
+  external JSObject? get bluetoothServiceClassId;
 }
